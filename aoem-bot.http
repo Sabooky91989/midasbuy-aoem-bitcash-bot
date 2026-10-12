@@ -1,0 +1,63 @@
+### AOEM Bitcash Bot & Balance Monitoring API Testing (.http)
+@baseUrl = http://localhost:7000/api
+
+### 1. Healthcheck
+GET http://localhost:7000/health
+Content-Type: application/json
+
+### 2. Check Bitcash Wallet Balance
+GET {{baseUrl}}/bitcash/balance
+Content-Type: application/json
+
+### 3. Sync Bitcash Balance with Portal
+POST {{baseUrl}}/bitcash/balance/sync
+Content-Type: application/json
+
+### 4. Get Bitcash Balance Transaction Ledger
+GET {{baseUrl}}/bitcash/ledger
+Content-Type: application/json
+
+### 5. Execute Automated Top-up (Auto OTP Sandbox Mode)
+POST {{baseUrl}}/topup/execute
+Content-Type: application/json
+
+{
+  "uid": "5250140737488366145",
+  "server": "Empire#239",
+  "pack": "99+109 Coin",
+  "priceJpy": 146,
+  "autoOtp": true
+}
+
+### 6. Execute Automated Top-up (Manual OTP Mode)
+POST {{baseUrl}}/topup/execute
+Content-Type: application/json
+
+{
+  "uid": "5250140737488366145",
+  "server": "Empire#239",
+  "pack": "99+109 Coin",
+  "priceJpy": 146,
+  "autoOtp": false
+}
+
+### 7. Get All Bot Jobs
+GET {{baseUrl}}/topup/jobs
+Content-Type: application/json
+
+### 8. Submit OTP for a Waiting Job
+POST {{baseUrl}}/topup/otp
+Content-Type: application/json
+
+{
+  "jobId": "job-123456789",
+  "otp": "151550"
+}
+
+### 9. List All Top-Up Orders
+GET {{baseUrl}}/orders
+Content-Type: application/json
+
+### 10. Get Order by ID (with Slip details)
+GET {{baseUrl}}/orders/ORD-AOEM-1092
+Content-Type: application/json

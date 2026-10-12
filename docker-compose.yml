@@ -1,0 +1,21 @@
+services:
+  aoem-bot:
+    build: .
+    container_name: aoem_bitcash_bot
+    environment:
+      PORT: 7000
+      NODE_ENV: production
+      MIDASBUY_URL: https://www.midasbuy.com/midasbuy/jp/buy/aoem
+      MIDASBUY_ID: Botfordevinblack@hotmail.com
+      MIDASBUY_PASSWORD: testdev123
+      BITCASH_ID: Inblackm7
+      BITCASH_PASSWORD: kanomtandede@7
+      HOTMAIL_OTP_EMAIL: Inblackbitcash7g@hotmail.com
+      HOTMAIL_OTP_PASSWORD: Tishaluna123
+      DEFAULT_UID: "5250140737488366145"
+      DEFAULT_SERVER: "Empire#239"
+      DEFAULT_PACK: "99+109 Coin"
+      DEFAULT_PRICE_JPY: "146"
+    ports:
+      - "7000:7000"
+    restart: unless-stopped

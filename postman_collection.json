@@ -1,0 +1,144 @@
+{
+  "info": {
+    "_postman_id": "aoem-bitcash-bot-collection",
+    "name": "AOEM Midasbuy Japan Bitcash Top-Up Bot API",
+    "description": "Postman Collection for Technical Assessment: Bot Developer Skill Test - Age of Empires Mobile (AOEM) Midasbuy Japan Auto Top-Up & Bitcash Balance Monitoring",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Healthcheck",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:6000/health",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "7000",
+          "path": ["health"]
+        }
+      }
+    },
+    {
+      "name": "Balance - Get Current Bitcash Balance",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:6000/api/bitcash/balance",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "7000",
+          "path": ["api", "bitcash", "balance"]
+        }
+      }
+    },
+    {
+      "name": "Balance - Sync with Portal",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:6000/api/bitcash/balance/sync",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "7000",
+          "path": ["api", "bitcash", "balance", "sync"]
+        }
+      }
+    },
+    {
+      "name": "Balance - Get Ledger History",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:6000/api/bitcash/ledger",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "7000",
+          "path": ["api", "bitcash", "ledger"]
+        }
+      }
+    },
+    {
+      "name": "Bot - Execute Topup (Default Pack 99+109 Coin 146 JPY)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"uid\": \"5250140737488366145\",\n  \"server\": \"Empire#239\",\n  \"pack\": \"99+109 Coin\",\n  \"priceJpy\": 146,\n  \"autoOtp\": true\n}"
+        },
+        "url": {
+          "raw": "http://localhost:6000/api/topup/execute",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "7000",
+          "path": ["api", "topup", "execute"]
+        }
+      }
+    },
+    {
+      "name": "Bot - Get All Execution Jobs",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:6000/api/topup/jobs",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "7000",
+          "path": ["api", "topup", "jobs"]
+        }
+      }
+    },
+    {
+      "name": "Bot - Submit OTP",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"jobId\": \"job-test\",\n  \"otp\": \"151550\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:6000/api/topup/otp",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "7000",
+          "path": ["api", "topup", "otp"]
+        }
+      }
+    },
+    {
+      "name": "Orders - List All Orders",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:6000/api/orders",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "7000",
+          "path": ["api", "orders"]
+        }
+      }
+    },
+    {
+      "name": "Orders - Get Order by ID (Slip details)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:6000/api/orders/ORD-AOEM-1092",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "7000",
+          "path": ["api", "orders", "ORD-AOEM-1092"]
+        }
+      }
+    }
+  ]
+}
