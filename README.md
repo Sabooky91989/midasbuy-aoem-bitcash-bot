@@ -14,7 +14,7 @@
 
 ```mermaid
 graph TD
-    Client[Operator / Client API] -->|REST / SSE /api/stream| Gateway[Bot API Server :6000]
+    Client[Operator / Client API] -->|REST / SSE /api/stream| Gateway[Bot API Server :7000]
     Gateway -->|Trigger Pipeline| BotEngine[AOEM Bot Automation Engine]
     
     subgraph "External Providers"
