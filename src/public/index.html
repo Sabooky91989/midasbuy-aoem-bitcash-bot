@@ -511,6 +511,9 @@
         </div>
       </div>
       <div class="header-meta">
+        <div class="status-pill" style="border-color: #3b82f6;">
+          <span style="color: #60a5fa; font-weight: 600;">👤 Operator: Admin</span>
+        </div>
         <div class="status-pill">
           <span class="dot"></span>
           <span id="liveClock">อัปเดต 22:15:00</span>
@@ -525,12 +528,13 @@
       <div class="info-card">
         <div class="info-card-header">
           <span>MIDASBUY JAPAN ACCOUNT</span>
-          <span style="color: var(--accent-green);">● Authenticated</span>
+          <span id="midasbuyStatusBadge" style="color: var(--accent-green);">● Authenticated</span>
         </div>
-        <div class="info-card-title">Botfordevinblack@hotmail.com</div>
-        <div class="info-meta-line">Region: 🇯🇵 Japan (JPY) • Password: ••••••••</div>
-        <div style="margin-top: 10px;">
-          <button class="btn-xs" onclick="showToast('Session Cookie Midasbuy Active')">ตรวจสอบ Session</button>
+        <div class="info-card-title" id="midasbuyEmailDisplay">Botfordevinblack@hotmail.com</div>
+        <div class="info-meta-line" id="midasbuyMetaLine">Region: 🇯🇵 Japan (JPY) • Password: ••••••••</div>
+        <div style="margin-top: 10px; display: flex; gap: 8px;">
+          <button class="btn-xs" onclick="openMidasbuyModal()">เข้าสู่ระบบ Midasbuy</button>
+          <button class="btn-xs" style="color: #f87171;" onclick="logoutMidasbuy()">ออกจากระบบ</button>
         </div>
       </div>
 
@@ -689,6 +693,34 @@
     </div>
   </div>
 
+  <!-- Midasbuy Sign In Modal (Matching PDF Page 2) -->
+  <div class="modal-backdrop" id="midasbuyModal">
+    <div class="modal-box" style="background: #101424; border: 1px solid #233352;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+        <h3 style="font-size: 18px; font-weight: 700; color: #fff;">SIGN IN MIDASBUY</h3>
+        <button class="btn-xs" onclick="closeModal('midasbuyModal')">&times;</button>
+      </div>
+      <p style="font-size: 12px; color: #94a3b8; margin-bottom: 16px;">
+        Login Midasbuy Account ก่อนทำรายการทุกครั้ง (ตามโจทย์การทดสอบข้อ 2)
+      </p>
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input type="email" class="form-input" id="midasbuyEmailInput" value="Botfordevinblack@hotmail.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input type="password" class="form-input" id="midasbuyPasswordInput" value="testdev123">
+      </div>
+      <div class="form-group" style="display: flex; align-items: center; gap: 8px;">
+        <input type="checkbox" id="midasbuyKeepSigned" checked>
+        <label for="midasbuyKeepSigned" style="font-size: 12px; color: #94a3b8; cursor: pointer;">Keep me signed in</label>
+      </div>
+      <button class="btn-primary" style="background: #3988ff; color: #fff; margin-top: 10px;" onclick="submitMidasbuyLogin()">
+        SIGN IN
+      </button>
+    </div>
+  </div>
+
   <!-- Toast -->
   <div class="toast-container" id="toastContainer"></div>
 
@@ -782,7 +814,78 @@
       });
     }
 
+    let isMidasbuyLoggedIn = true;
+
+    async function fetchAuthStatus() {
+      try {
+        const res = await fetch('/api/auth/midasbuy/status');
+        const json = await res.json();
+        if (json.success) {
+          isMidasbuyLoggedIn = json.data.isLoggedIn;
+          updateMidasbuyUI(json.data);
+        }
+      } catch (e) { console.error(e); }
+    }
+
+    function updateMidasbuyUI(session) {
+      const badge = document.getElementById('midasbuyStatusBadge');
+      const emailDisplay = document.getElementById('midasbuyEmailDisplay');
+      if (session && session.isLoggedIn) {
+        badge.innerText = '● Authenticated';
+        badge.style.color = 'var(--accent-green)';
+        emailDisplay.innerText = session.email;
+      } else {
+        badge.innerText = '● Not Logged In';
+        badge.style.color = '#ef4444';
+        emailDisplay.innerText = 'ยังไม่ได้เข้าสู่ระบบ';
+      }
+    }
+
+    function openMidasbuyModal() {
+      document.getElementById('midasbuyModal').classList.add('open');
+    }
+
+    async function submitMidasbuyLogin() {
+      const email = document.getElementById('midasbuyEmailInput').value.trim();
+      const password = document.getElementById('midasbuyPasswordInput').value.trim();
+      try {
+        const res = await fetch('/api/auth/midasbuy/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password, keepSignedIn: true })
+        });
+        const json = await res.json();
+        if (json.success) {
+          isMidasbuyLoggedIn = true;
+          updateMidasbuyUI(json.data);
+          closeModal('midasbuyModal');
+          showToast(`เข้าสู่ระบบ Midasbuy สำเร็จ: ${json.data.email}`, 'success');
+        } else {
+          showToast(json.error || 'เข้าสู่ระบบล้มเหลว', 'error');
+        }
+      } catch (e) {
+        showToast('การเชื่อมต่อล้มเหลว', 'error');
+      }
+    }
+
+    async function logoutMidasbuy() {
+      try {
+        await fetch('/api/auth/midasbuy/logout', { method: 'POST' });
+        isMidasbuyLoggedIn = false;
+        updateMidasbuyUI({ isLoggedIn: false, email: '' });
+        showToast('ออกจากระบบ Midasbuy แล้ว', 'info');
+      } catch (e) {
+        showToast('ออกจากระบบล้มเหลว', 'error');
+      }
+    }
+
     async function startBotExecution() {
+      if (!isMidasbuyLoggedIn) {
+        showToast('กรุณา Login Midasbuy Account ก่อนทำรายการทุกครั้งตามโจทย์', 'error');
+        openMidasbuyModal();
+        return;
+      }
+
       const btn = document.getElementById('btnRunBot');
       btn.disabled = true;
       btn.innerText = 'กำลังทำงาน...';
@@ -911,6 +1014,7 @@
 
     // Initialize
     renderStepper();
+    fetchAuthStatus();
     fetchBalance();
     fetchOrders();
     setupSSE();

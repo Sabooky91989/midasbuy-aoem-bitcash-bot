@@ -5,6 +5,7 @@ import fs from 'fs';
 import { BotController } from './modules/bot/bot.controller';
 import { BalanceController } from './modules/balance/balance.controller';
 import { OrderController } from './modules/orders/order.controller';
+import { AuthController } from './modules/auth/auth.controller';
 import { RealtimeBroadcaster } from './modules/realtime/eventStream';
 
 export function createApp(): Application {
@@ -32,8 +33,18 @@ export function createApp(): Application {
   const botController = new BotController();
   const balanceController = new BalanceController();
   const orderController = new OrderController();
+  const authController = new AuthController();
 
   const router = express.Router();
+
+  // Authentication (Midasbuy, Bitcash, Operator)
+  router.get('/auth/midasbuy/status', authController.getMidasbuyStatus);
+  router.post('/auth/midasbuy/login', authController.loginMidasbuy);
+  router.post('/auth/midasbuy/logout', authController.logoutMidasbuy);
+  router.get('/auth/bitcash/status', authController.getBitcashStatus);
+  router.post('/auth/bitcash/login', authController.loginBitcash);
+  router.get('/auth/operator/status', authController.getOperatorStatus);
+  router.post('/auth/operator/login', authController.loginOperator);
 
   // Top-Up Bot execution
   router.post('/topup/execute', botController.execute);
